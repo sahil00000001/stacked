@@ -1,5 +1,7 @@
 # Stacked — the wallet-stack of covers
 
+**Live app: https://stacked-rose.vercel.app** (open it on your phone and install it from the You tab).
+
 For people in India covered by more than one health policy. Tell it every policy you're on and a real or likely hospital stay, and it says which policy to claim from first, what each one pays and deducts, what you pay, and how reliable each insurer's claim record is.
 
 Data and rules: [docs/india-health-insurance-market-2026.md](docs/india-health-insurance-market-2026.md). Every place the spec was silent: [DECISIONS.md](DECISIONS.md).
@@ -45,7 +47,13 @@ Stacked is an installable web app (PWA). It gets its own icon, opens full screen
 | iPhone / iPad (Safari) | Share → *Add to Home Screen*. |
 | Windows / Mac (Chrome, Edge) | The install icon in the address bar, or You → *Install the app*. |
 
-Installing needs a secure address: `https://…`, or `http://localhost` on the same computer. To try it on a phone over your Wi-Fi, run `npm run build && npm run start:lan` and open `http://<this-PC's-IP>:3000`. It works there as a website, but phones only offer *Install* over https, so deploy it (for example to Vercel with the root directory set to `apps/web`) to install it on a phone.
+Installing needs a secure address: the live https link above, or `http://localhost` on the same computer. On your Wi-Fi, `npm run build && npm run start:lan` serves `http://<this-PC's-IP>:3000`, but phones only offer *Install* over https.
+
+## Deployment
+
+Vercel project `stacked` (root directory `apps/web`, framework Next.js), linked to this repo. Every push to `main` deploys to production, and other branches get preview URLs. No environment variables are needed; set `DATABASE_URL` in Vercel to serve reference data from Postgres.
+
+To test a deployment with the e2e suite: `BASE_URL=https://stacked-rose.vercel.app npm run e2e`.
 
 ## Check it
 

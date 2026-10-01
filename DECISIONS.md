@@ -114,3 +114,10 @@ Every place where the spec (BUILD_PROMPT.md and docs/india-health-insurance-mark
 | A3 | Service worker in development. | Registered only in production builds, so `npm run dev` never serves stale files. `sw.js` is sent with `no-cache` so updates are picked up. |
 | A4 | Icon. | Three stacked cards on `--ink` (the vault metaphor), with the front card on a plinth. PNGs are rendered from `app/icon.svg`; the maskable version keeps the art inside the 80% safe zone. |
 | A5 | iOS notch and home indicator in standalone mode. | `viewport-fit=cover` and a `black-translucent` status bar. The header pads with `env(safe-area-inset-top)`, and the tab bar already pads with the bottom inset. |
+
+## Publishing
+
+| # | Question | Decision |
+|---|---|---|
+| G1 | What goes into the public repo. | Everything except `BUILD_PROMPT.md`, which stays local (gitignored). It is the only file that names the design inspiration, and spec §12 says the codebase must carry no such references. Add it with `git add -f BUILD_PROMPT.md` if you want it public. |
+| G2 | Hosting. | Vercel, root directory `apps/web`, linked to GitHub so `main` deploys to production. The first deployment was built from the GitHub commit, not uploaded from this machine. |
