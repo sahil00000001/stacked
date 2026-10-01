@@ -1,0 +1,13 @@
+node_modules/
+coverage/
+.next/
+*.log
+.env*
+!.env.example
+test-results/
+playwright-report/
+*.tsbuildinfo
+
+# Original build prompt: kept local (it names the design inspiration; spec §12 says the codebase must not)
+BUILD_PROMPT.md
+.vercel

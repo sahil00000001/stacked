@@ -1,0 +1,221 @@
+// Stacked — data model (BUILD_PROMPT.md §7).
+// Reference tables use the research doc's column names so seed rows load unchanged.
+// Nested Policy and plan structures are stored as JSON validated by the Zod schemas
+// in @stacked/claim-engine; key columns are lifted out for querying.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum InsurerType {
+  PSU_GI
+  PVT_GI
+  SAHI
+}
+
+enum ProductDataStatus {
+  verified
+  partial
+  name_only
+}
+
+enum PolicyDataStatus {
+  user_verified
+  parsed_from_wording
+  aggregator
+  name_only
+}
+
+enum HolderRelationship {
+  self
+  employer_group
+  parents_floater
+  spouse
+  other
+}
+
+enum PolicyType {
+  individual
+  family_floater
+  multi_individual
+  group
+  senior
+  top_up
+  super_top_up
+  critical_illness
+  hospital_cash
+  personal_accident
+}
+
+/// Table A. Columns = Table A CSV header + as_of, source_url, metric_definition.
+/// CSR is an insurer-level figure; it is never stored on a product.
+model Insurer {
+  insurer_id              String      @id
+  insurer_name            String
+  insurer_type            InsurerType
+  csr_fy24                Float?
+  csr_fy25                Float?
+  csr_fy26                Float?
+  csr_3yr_avg             Float?
+  icr_fy23                Float?
+  icr_fy24                Float?
+  icr_fy25                Float?
+  health_gwp_fy26_cr      Int?
+  complaints_per_10k_fy26 Float?
+  complaints_3yr_avg      Float?
+  network_hospitals_min   Int?
+  flags                   String
+  repudiation_ratio       Float?
+  as_of                   DateTime    @db.Date
+  source_url              String
+  metric_definition       String
+
+  products Product[]
+  policies Policy[]
+
+  @@map("insurers")
+}
+
+/// Tables B1, B2 and the name-only list. Every feature column is nullable; the UI shows "Not known".
+model Product {
+  product_id             String            @id
+  /// NULL with all_insurers = true for standard products every insurer sells (Arogya Sanjeevani)
+  insurer_id             String?
+  all_insurers           Boolean           @default(false)
+  product_name           String
+  variant                String?
+  product_type           PolicyType?
+  uin                    String?
+  si_min                 String? // number of rupees or "unlimited"
+  si_max                 String?
+  room_rent_rule         String?
+  room_rent_value        String?
+  copay_rule             String?
+  ped_wait_months        Int?
+  specific_wait_months   Int?
+  restoration            String?
+  bonus_pct_per_year     Float?
+  bonus_max_pct          Float?
+  bonus_reduces_on_claim Boolean?
+  pre_days               Int?
+  post_days              Int?
+  consumables            String?
+  maternity              String?
+  indicative_premium     String?
+  known_features         String?
+  sources                String?
+  data_status            ProductDataStatus
+  as_of                  DateTime          @db.Date
+  source_url             String?
+
+  insurer  Insurer? @relation(fields: [insurer_id], references: [insurer_id])
+  policies Policy[]
+
+  @@index([insurer_id])
+  @@map("products")
+}
+
+/// Table C. Feature columns are relevance 0–3.
+model Scenario {
+  scenario_id           String @id
+  scenario_name         String
+  room_rent             Int
+  copay                 Int
+  sublimit              Int
+  initial_specific_wait Int
+  ped_wait              Int
+  restoration           Int
+  consumables           Int
+  cashless_network      Int
+  pre_post_days         Int
+  maternity             Int
+  csr_weight            Float
+  notes                 String
+
+  @@map("scenarios")
+}
+
+model User {
+  id         String   @id @default(cuid())
+  email      String   @unique
+  name       String?
+  created_at DateTime @default(now())
+
+  memberships FamilyMember[]
+  policies    Policy[]
+  claim_plans ClaimPlan[]
+
+  @@map("users")
+}
+
+/// A user may belong to a family group whose members share floater policies.
+model FamilyGroup {
+  id         String   @id @default(cuid())
+  name       String
+  created_at DateTime @default(now())
+
+  members  FamilyMember[]
+  policies Policy[]
+
+  @@map("family_groups")
+}
+
+model FamilyMember {
+  user_id         String
+  family_group_id String
+  role            String @default("member")
+
+  user  User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  group FamilyGroup @relation(fields: [family_group_id], references: [id], onDelete: Cascade)
+
+  @@id([user_id, family_group_id])
+  @@map("family_members")
+}
+
+/// The Policy schema. `data` holds the full Zod-validated Policy; key fields are columns.
+model Policy {
+  policy_id           String             @id
+  user_id             String
+  family_group_id     String?
+  insurer_id          String?
+  product_id          String?
+  holder_relationship HolderRelationship
+  policy_type         PolicyType
+  data                Json
+  // provenance (§7)
+  data_status         PolicyDataStatus
+  source_url          String?
+  as_of               DateTime?          @db.Date
+  verified_by_user_at DateTime?
+  created_at          DateTime           @default(now())
+  updated_at          DateTime           @updatedAt
+
+  user    User         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  group   FamilyGroup? @relation(fields: [family_group_id], references: [id])
+  insurer Insurer?     @relation(fields: [insurer_id], references: [insurer_id])
+  product Product?     @relation(fields: [product_id], references: [product_id])
+
+  @@index([user_id])
+  @@map("policies")
+}
+
+/// Saved engine outputs with the input snapshot and engine version.
+model ClaimPlan {
+  id             String   @id @default(cuid())
+  user_id        String
+  scenario       Json // ClaimScenario input
+  policies       Json // Policy[] as they were when the plan was made
+  plan           Json // ClaimPlan output
+  engine_version String
+  created_at     DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@map("claim_plans")
+}

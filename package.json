@@ -1,0 +1,24 @@
+{
+  "name": "stacked",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w @stacked/web",
+    "build": "npm run build -w @stacked/web",
+    "start": "npm run start -w @stacked/web",
+    "start:lan": "npm run start:lan -w @stacked/web",
+    "test": "npm run test --workspaces --if-present",
+    "coverage": "npm run coverage -w @stacked/claim-engine",
+    "e2e": "npm run e2e -w @stacked/web",
+    "lint": "npm run lint -w @stacked/web",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "seed:extract": "npm run extract -w @stacked/seed-data",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "prettier": "^3.9.0"
+  }
+}

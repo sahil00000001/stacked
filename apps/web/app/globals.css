@@ -1,0 +1,276 @@
+@import "tailwindcss";
+@import "../../../design/tokens.css";
+
+/*
+ * Tailwind v4 reads the design tokens. Default palette, fonts, radii and
+ * shadows are removed so components can only use what tokens.css defines.
+ */
+@theme {
+  --color-*: initial;
+  --radius-*: initial;
+  --shadow-*: initial;
+  --text-*: initial;
+}
+
+@theme inline {
+  --color-ink: var(--ink);
+  --color-graphite: var(--graphite);
+  --color-slate: var(--slate);
+  --color-edge: var(--edge);
+  --color-bone: var(--bone);
+  --color-ash: var(--ash);
+  --color-mint: var(--mint);
+  --color-covered: var(--covered);
+  --color-partial: var(--partial);
+  --color-risk: var(--risk);
+  --color-transparent: transparent;
+
+  --font-sans: var(--font-grotesk), "Space Grotesk", "Manrope", system-ui, sans-serif;
+
+  --text-12: 0.75rem;
+  --text-12--line-height: 1.45;
+  --text-14: 0.875rem;
+  --text-14--line-height: 1.45;
+  --text-16: 1rem;
+  --text-16--line-height: 1.45;
+  --text-20: 1.25rem;
+  --text-20--line-height: 1.3;
+  --text-28: 1.75rem;
+  --text-28--line-height: 1.15;
+  --text-40: 2.5rem;
+  --text-40--line-height: 1.1;
+  --text-56: 3.5rem;
+  --text-56--line-height: 1.05;
+
+  --radius-button: var(--radius-button);
+  --radius-card: var(--radius-card);
+  --radius-chip: var(--radius-chip);
+
+  --shadow-plinth: var(--plinth);
+}
+
+@layer base {
+  html {
+    background: var(--surface-page);
+    color: var(--text-primary);
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background: var(--surface-page);
+    color: var(--text-primary);
+    font-family: var(--font-grotesk), var(--font-sans);
+    font-size: var(--text-16);
+    line-height: var(--leading-body);
+    font-weight: var(--weight-regular);
+    min-height: 100dvh;
+  }
+  h1,
+  h2,
+  h3 {
+    font-weight: var(--weight-medium);
+    text-wrap: balance;
+  }
+  p,
+  li {
+    max-width: var(--measure);
+  }
+  a {
+    color: var(--link);
+    text-underline-offset: 3px;
+  }
+  :focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+  ::selection {
+    background: var(--mint);
+    color: var(--ink);
+  }
+  input,
+  select,
+  textarea,
+  button {
+    font: inherit;
+    color: inherit;
+  }
+}
+
+@layer components {
+  /* Rupee figures: tabular, never monospace */
+  .money {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Grain: the only texture, on graphite cards and sheets */
+  .grain {
+    position: relative;
+    background-color: var(--graphite);
+    isolation: isolate;
+  }
+  .grain::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background-image: var(--grain);
+    opacity: var(--grain-opacity);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  /* PlinthButton */
+  .plinth {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    min-height: var(--tap-min);
+    padding: 0 var(--space-5);
+    border-radius: var(--radius-button);
+    box-shadow: var(--plinth);
+    font-weight: var(--weight-medium);
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      transform var(--duration-press) var(--ease-out),
+      box-shadow var(--duration-press) var(--ease-out),
+      background-color var(--duration-press) var(--ease-out);
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .plinth-primary {
+    background: var(--bone);
+    color: var(--ink);
+  }
+  .plinth-secondary {
+    background: var(--graphite);
+    color: var(--bone);
+    border: var(--border-width) solid var(--edge);
+  }
+  .plinth-lg {
+    min-height: 3.25rem;
+    padding: 0 var(--space-6);
+  }
+  .plinth:active:not([aria-disabled="true"]):not(:disabled),
+  .plinth[data-pressed="true"] {
+    transform: translate(var(--plinth-offset), var(--plinth-offset));
+    box-shadow: var(--plinth-none);
+  }
+  .plinth:disabled,
+  .plinth[aria-disabled="true"] {
+    background: var(--slate);
+    color: var(--ash);
+    border-color: transparent;
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .plinth:active:not([aria-disabled="true"]):not(:disabled),
+    .plinth[data-pressed="true"] {
+      transform: none;
+      box-shadow: var(--plinth);
+    }
+    .plinth-primary:active:not(:disabled),
+    .plinth-primary[data-pressed="true"] {
+      background: var(--ash);
+    }
+    .plinth-secondary:active:not(:disabled),
+    .plinth-secondary[data-pressed="true"] {
+      background: var(--slate);
+    }
+  }
+
+  /* Form fields: edge outline + ash underline for a 3:1 boundary (DECISIONS D1) */
+  .field {
+    width: 100%;
+    min-height: var(--tap-min);
+    padding: var(--space-2) var(--space-3);
+    background: var(--slate);
+    border: var(--border-width) solid var(--edge);
+    border-bottom-color: var(--field-rule);
+    border-radius: var(--radius-button);
+    color: var(--bone);
+  }
+  .field::placeholder {
+    color: var(--ash);
+    opacity: 1;
+  }
+  .field[aria-invalid="true"] {
+    border-bottom-color: var(--risk);
+  }
+  select.field {
+    appearance: none;
+    /* chevron as an inline SVG, ash */
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1.5l5 5 5-5' fill='none' stroke='%239a9ca3' stroke-width='1.5'/></svg>");
+    background-position: calc(100% - 14px) 50%;
+    background-repeat: no-repeat;
+    padding-right: var(--space-8);
+  }
+
+  /* Choice chips used as radio groups */
+  .choice {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap-min);
+    padding: 0 var(--space-4);
+    border: var(--border-width) solid var(--edge);
+    border-radius: var(--radius-chip);
+    background: var(--graphite);
+    color: var(--bone);
+    cursor: pointer;
+    font-weight: var(--weight-medium);
+    font-size: var(--text-14);
+  }
+  .choice:has(input:checked) {
+    background: var(--bone);
+    color: var(--ink);
+    border-color: var(--bone);
+  }
+  .choice:has(input:focus-visible) {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+
+  .eyebrow {
+    font-size: var(--eyebrow-size);
+    letter-spacing: var(--eyebrow-tracking);
+    text-transform: uppercase;
+    font-weight: var(--weight-medium);
+    color: var(--ash);
+  }
+
+  .hatch-risk {
+    background: var(--hatch-risk);
+  }
+}
+
+@media print {
+  html,
+  body {
+    background: #fff;
+    color: #000;
+  }
+  nav,
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* Sheet: bottom sheet on mobile, right drawer from 720px */
+dialog.sheet {
+  margin: auto 0 0 0;
+  border-top: var(--border-width) solid var(--edge);
+  border-radius: var(--radius-card) var(--radius-card) 0 0;
+  background-color: var(--graphite);
+}
+@media (min-width: 45rem) {
+  dialog.sheet {
+    margin: 0 0 0 auto;
+    height: 100dvh;
+    max-height: 100dvh;
+    width: min(28rem, 100%);
+    border-top: 0;
+    border-left: var(--border-width) solid var(--edge);
+    border-radius: 0;
+  }
+}

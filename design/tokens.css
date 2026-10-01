@@ -1,0 +1,155 @@
+/*
+ * Stacked — design tokens (v1, dark only)
+ * Source of truth for every colour, type, space, depth and motion value.
+ * Components read these variables; no raw hex or px values in component code.
+ * Tailwind v4 maps them in apps/web/app/globals.css via `@theme inline`.
+ *
+ * Contrast (WCAG 2.1, measured):
+ *   bone on ink 15.72, bone on graphite 14.65, bone on slate 12.81
+ *   ash on ink 6.94, ash on graphite 6.47, ash on slate 5.66
+ *   mint on graphite 12.48, covered on graphite 10.19
+ *   partial on graphite 9.16, risk on graphite 5.52, risk on slate 4.82
+ *   ink on bone 15.72, ink on covered 10.93, ink on partial 9.83, ink on risk 5.92
+ *   edge on graphite 1.36 — decorative/structural only; never the sole
+ *   boundary of an input (inputs add a --field-rule underline, 6.47:1).
+ */
+
+:root {
+  color-scheme: dark;
+
+  /* ── Colour: surfaces ───────────────────────────────────────────── */
+  --ink: #0f1012; /* page background */
+  --graphite: #17181c; /* cards, sheets */
+  --slate: #22242a; /* raised surfaces, inputs */
+  --edge: #2e3138; /* 1px borders and the hard plinth shadow */
+
+  /* ── Colour: text ───────────────────────────────────────────────── */
+  --bone: #ede9e1; /* primary text, primary button face */
+  --ash: #9a9ca3; /* secondary text — min 14px / weight 500 */
+
+  /* ── Colour: the single accent ──────────────────────────────────── */
+  --mint: #a8e6c3; /* focus rings, active tab, links. Nothing else. */
+
+  /* ── Colour: semantic (ClaimSplitBar, DeductionLedger, ConfidenceMeter only) */
+  --covered: #7bd88f; /* paid by insurer */
+  --partial: #e0b458; /* deducted / at risk */
+  --risk: #e06c6c; /* out of pocket / rejected */
+
+  /* ── Role aliases (components use these, not the raw names) ─────── */
+  --surface-page: var(--ink);
+  --surface-card: var(--graphite);
+  --surface-raised: var(--slate);
+  --border: var(--edge);
+  --text-primary: var(--bone);
+  --text-secondary: var(--ash);
+  --text-on-light: var(--ink);
+  --link: var(--mint);
+  --focus: var(--mint);
+  --field-rule: var(--ash); /* 1px underline on inputs for 3:1 boundary */
+
+  /* ── Typography ─────────────────────────────────────────────────── */
+  --font-sans: "Space Grotesk", "Manrope", system-ui, sans-serif;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-bold: 700;
+
+  /* Scale: 12 / 14 / 16 / 20 / 28 / 40 / 56 */
+  --text-12: 0.75rem;
+  --text-14: 0.875rem;
+  --text-16: 1rem;
+  --text-20: 1.25rem;
+  --text-28: 1.75rem;
+  --text-40: 2.5rem;
+  --text-56: 3.5rem;
+
+  --leading-body: 1.45; /* 16/1.45 body */
+  --leading-tight: 1.15; /* 28px and up */
+  --leading-snug: 1.3; /* 20px */
+
+  --measure: 65ch; /* max line length */
+
+  /* The only tracked-uppercase usage: insurer eyebrow on PolicyCard */
+  --eyebrow-size: 0.6875rem; /* 11px */
+  --eyebrow-tracking: 0.08em;
+
+  /* Money hero */
+  --money-hero-size: var(--text-40); /* 56 on wide viewports, see below */
+  --money-hero-weight: var(--weight-medium);
+
+  /* ── Space (4px base) ───────────────────────────────────────────── */
+  --space-1: 0.25rem; /* 4 */
+  --space-2: 0.5rem; /* 8 */
+  --space-3: 0.75rem; /* 12 */
+  --space-4: 1rem; /* 16 — mobile side gutter */
+  --space-5: 1.25rem; /* 20 */
+  --space-6: 1.5rem; /* 24 */
+  --space-8: 2rem; /* 32 */
+  --space-10: 2.5rem; /* 40 */
+  --space-12: 3rem; /* 48 */
+  --space-16: 4rem; /* 64 */
+
+  /* ── Layout ─────────────────────────────────────────────────────── */
+  --gutter: var(--space-4);
+  --column: 45rem; /* 720px centred column on desktop */
+  --tabbar-height: 4rem; /* 64px bottom tab bar on mobile */
+  --tap-min: 2.75rem; /* 44px minimum touch target */
+
+  /* ── Shape ──────────────────────────────────────────────────────── */
+  --radius-button: 2px;
+  --radius-card: 6px;
+  --radius-chip: 2px;
+  --border-width: 1px;
+
+  /* ── Depth: the plinth is the only shadow in the system ─────────── */
+  --plinth-offset: 4px;
+  --plinth: var(--plinth-offset) var(--plinth-offset) 0 0 var(--edge);
+  --plinth-none: 0 0 0 0 transparent;
+
+  /* Focus ring: 2px mint, offset 2px */
+  --focus-width: 2px;
+  --focus-offset: 2px;
+
+  /* ── Texture: SVG noise grain on --graphite cards (5% opacity) ──── */
+  --grain-opacity: 0.05;
+  --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+
+  /* ── Semantic pattern: out-of-pocket hatch (ClaimSplitBar only) ─── */
+  --hatch-risk: repeating-linear-gradient(
+    135deg,
+    var(--risk) 0 6px,
+    color-mix(in srgb, var(--risk) 55%, var(--ink)) 6px 9px
+  );
+
+  /* ── Wallet stack (Vault) ───────────────────────────────────────── */
+  --stack-offset: 12px;
+  --stack-tilt: 2deg; /* alternates +/- per card */
+
+  /* ── Motion ─────────────────────────────────────────────────────── */
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --duration-press: 90ms; /* PlinthButton depress */
+  --duration-quick: 120ms; /* chips, toggles, toasts in */
+  --duration-base: 180ms; /* sheet open, card expand */
+  --duration-split-fill: 500ms; /* ClaimSplitBar total fill — the one orchestrated moment */
+
+  /* ── Layers ─────────────────────────────────────────────────────── */
+  --z-tabbar: 10;
+  --z-sheet: 20;
+  --z-toast: 30;
+}
+
+/* Wide viewports: centred column, larger money hero */
+@media (min-width: 48rem) {
+  :root {
+    --money-hero-size: var(--text-56);
+  }
+}
+
+/* Reduced motion: fills happen instantly; press feedback becomes colour-only */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-press: 0ms;
+    --duration-quick: 0ms;
+    --duration-base: 0ms;
+    --duration-split-fill: 0ms;
+  }
+}
