@@ -117,7 +117,7 @@ function EditPolicy({ policy, insurers }: { policy: Policy; insurers: InsurerMet
       >
         <PolicyForm value={draft} onChange={setDraft} errors={errors} insurers={insurers} />
         <VerifyBox checked={verified} onChange={setVerified} />
-        <PlinthButton type="submit" size="lg" className="self-start">
+        <PlinthButton type="submit" size="lg" className="w-full sm:w-auto sm:self-start">
           {t.add.saveEdit}
         </PlinthButton>
       </form>
@@ -143,7 +143,7 @@ function ManualFlow({ insurers }: { insurers: InsurerMetrics[] }) {
       }}
     >
       <PolicyForm value={draft} onChange={setDraft} errors={errors} insurers={insurers} />
-      <PlinthButton type="submit" size="lg" className="self-start">
+      <PlinthButton type="submit" size="lg" className="w-full sm:w-auto sm:self-start">
         {t.add.save}
       </PlinthButton>
     </form>
@@ -336,7 +336,7 @@ function PresetFlow({ products, insurers }: { products: Product[]; insurers: Ins
             onChange={(e) => setBasics({ ...basics, renewal_date: e.target.value })}
           />
         </div>
-        <PlinthButton type="submit" className="self-start">
+        <PlinthButton type="submit" className="w-full sm:w-auto sm:self-start">
           {t.add.showTerms}
         </PlinthButton>
       </form>
@@ -365,7 +365,7 @@ function PresetFlow({ products, insurers }: { products: Product[]; insurers: Ins
         intro={t.add.termsFromPreset}
       />
       <VerifyBox checked={verified} onChange={setVerified} />
-      <div className="flex flex-wrap gap-3">
+      <div className="actions">
         <PlinthButton type="submit" size="lg">
           {t.add.save}
         </PlinthButton>
@@ -524,7 +524,7 @@ function EmployerFlow({ insurers }: { insurers: InsurerMetrics[] }) {
           error={errors.renewal_date}
         />
       </div>
-      <PlinthButton type="submit" size="lg" className="self-start">
+      <PlinthButton type="submit" size="lg" className="w-full sm:w-auto sm:self-start">
         {t.add.save}
       </PlinthButton>
     </form>

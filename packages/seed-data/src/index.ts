@@ -11,3 +11,4 @@ export const PRODUCTS = productsJson as unknown as Product[];
 export const SCENARIOS = scenariosJson as unknown as Scenario[];
 
 export { presetFromProduct, type PresetInput } from "./preset.js";
+export { DEMO_PERSON, DEMO_POLICIES, demoScenario } from "./demo.js";

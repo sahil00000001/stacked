@@ -121,3 +121,23 @@ Every place where the spec (BUILD_PROMPT.md and docs/india-health-insurance-mark
 |---|---|---|
 | G1 | What goes into the public repo. | Everything except `BUILD_PROMPT.md`, which stays local (gitignored). It is the only file that names the design inspiration, and spec §12 says the codebase must carry no such references. Add it with `git add -f BUILD_PROMPT.md` if you want it public. |
 | G2 | Hosting. | Vercel, root directory `apps/web`, linked to GitHub so `main` deploys to production. The first deployment was built from the GitHub commit, not uploaded from this machine. |
+
+## Database (Supabase) and sample data
+
+| # | Question | Decision |
+|---|---|---|
+| DB1 | Supabase's direct host (`db.<ref>.supabase.co`) is IPv6-only, and neither this machine nor Vercel can reach it. | Supavisor pooler in Mumbai (`aws-1-ap-south-1`): transaction mode (6543, `pgbouncer=true&connection_limit=1`) as `DATABASE_URL` for the app, session mode (5432) as `DIRECT_URL` for migrations. |
+| DB2 | The database is shared: `public` already holds about 56 tables from other projects, including `products` and `users`. | Stacked lives in its own **`stacked`** schema (`?schema=stacked`, and the migration pins `SET search_path`). Only `prisma migrate deploy` is used, never `migrate dev`, which can offer to reset a database. Verified afterwards: 9 tables in `stacked`, nothing added to `public`. |
+| DB3 | What happens if the database is down? | Every read falls back to the built-in seed rows, so the app never breaks because of the database. |
+| DB4 | Secrets. | The DB URLs live only in `apps/web/.env` (gitignored) and in Vercel as encrypted variables. The Supabase API keys aren't needed (Prisma connects directly) and are stored nowhere. |
+| DB5 | "Add some dummy data". | A fictional demo user, Asha Rao (`demo@stacked.app`), with the Rao family group, four policies (employer group, ReAssure 2.0, parents' Mediclaim, CritiCare) and one saved claim plan in the database. `/api/demo` serves them. *Try with sample policies* loads them into the on-device vault with their claim plan, and a banner shows sample mode. Adding your own policy replaces the samples. |
+
+## UI updates (requested 2026-10-01)
+
+| # | Request | Decision |
+|---|---|---|
+| U1 | An eye-catching intro when someone opens the app. | First visit (empty vault) and `/welcome` show an intro: name, slogan ("Three covers. One clear claim."), the policies dealing in like cards, a hospital bill dropping on them, the split bar filling in claim order with counters, then three benefit points. It plays once, has *Replay*, and shows its final state under reduced motion. This overrides §4.5's "exactly one orchestrated animation", at your request. The numbers are the engine's real result for the sample vault, and a test fails if they drift. |
+| U2 | Option buttons "down" on mobile and professional, not funky. | Radio options are a stacked full-width list with standard radio dots on phones and a single row from 640px. Two-option groups (Yes/No) sit side by side. This replaces chips that inverted to a bright fill when selected. |
+| U3 | Same request, for action buttons. | Action rows stack full width on phones (`.actions`) and sit inline from 640px. The plinth button style stays as the approved design system. |
+| U4 | Same request, for navigation. | The bottom tab bar gets line icons over labels (standard app navigation) and is fixed at the bottom on phones, safe-area aware. This amends components.md's "text-only labels". |
+| U5 | The full e2e suite became flaky once every test's fresh browser installed the offline service worker. | Service workers are blocked in tests except `pwa.spec.ts`. |

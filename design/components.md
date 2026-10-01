@@ -205,7 +205,8 @@ Two uses, sharing a single layout of a label column and a value column (stacked 
 
 | Primitive | Why it exists |
 |---|---|
-| **TabBar** | Section 4.1 requires a bottom tab bar on mobile (Vault, Simulate, Insurers, You). It is fixed, `--ink` with a 1px `--edge` top rule, and text-only labels. The active tab shows `--mint` text and a 2px `--mint` top bar. At 720px and up it becomes a top nav row inside the column. |
+| **TabBar** | Section 4.1 requires a bottom tab bar on mobile (Vault, Simulate, Insurers, You). It is fixed and safe-area aware, `--ink` with a 1px `--edge` top rule, with a 22px line icon over each label (DECISIONS U4). The active tab shows `--mint` text and a 2px `--mint` bar. At 768px and up it becomes a top nav row inside the column. |
+| **Intro** | First-visit explainer (DECISIONS U1): name, slogan, animated sample (cards deal in, bill drops, split bar fills, counters run), benefit points and the two ways in. Plays once, can be replayed, and is static under reduced motion. |
 | **SourceNote** | Every metric carries its period and source in small text (12px `--ash`, the only 12px use). It is one primitive so the wording never drifts. |
 | **Disclaimer** | The fixed footer on every result and scorecard: "Not insurance advice. Figures are insurer-level from IRDAI disclosures (FY24–26). Your policy wording overrides this app." |
 | **Money** | A `<span>` wrapper applying `tabular-nums` and the engine's `formatINR` (full "₹1,20,000" in ledgers, compact "₹1.2L" in bars and cards). |

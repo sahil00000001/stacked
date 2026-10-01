@@ -8,7 +8,9 @@ export default defineConfig({
   fullyParallel: true,
   retries: 0,
   reporter: [["list"]],
-  use: { baseURL: BASE_URL, trace: "retain-on-failure" },
+  // service workers are blocked except in pwa.spec.ts, so each test's fresh
+  // browser doesn't pre-cache the whole app while other tests run
+  use: { baseURL: BASE_URL, trace: "retain-on-failure", serviceWorkers: "block" },
   webServer: process.env.BASE_URL
     ? undefined
     : { command: "npm run start", url: BASE_URL, reuseExistingServer: true, timeout: 120_000 },

@@ -98,7 +98,7 @@ export function PolicyCard({
               </dl>
             </div>
           ))}
-          {actions && <div className="flex flex-wrap gap-3">{actions}</div>}
+          {actions && <div className="actions">{actions}</div>}
         </section>
       )}
     </motion.article>

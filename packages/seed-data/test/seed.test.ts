@@ -227,3 +227,16 @@ describe("presetFromProduct", () => {
     expect(plan.out_of_pocket).toBe(25000);
   });
 });
+
+describe("demo vault", () => {
+  it("is four valid policies that produce a cascade plan", async () => {
+    const { DEMO_POLICIES, demoScenario } = await import("../src/index.js");
+    expect(DEMO_POLICIES).toHaveLength(4);
+    for (const p of DEMO_POLICIES) expect(() => PolicySchema.parse(p), p.policy_id).not.toThrow();
+    const plan = allocateClaim(DEMO_POLICIES, demoScenario("2026-10-01"), INSURERS);
+    expect(plan.allocation[0]!.policy_id).toBe("demo-employer");
+    expect(plan.allocation.length).toBeGreaterThanOrEqual(2);
+    expect(plan.fixed_benefit_payout).toBe(1000000);
+    expect(plan.indemnity_paid + plan.out_of_pocket).toBe(plan.total_bill);
+  });
+});

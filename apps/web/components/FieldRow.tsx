@@ -175,7 +175,7 @@ export function ChoiceGroup<T extends string>({
   return (
     <fieldset className="flex flex-col gap-1.5" aria-describedby={hint ? `${id}-hint` : undefined}>
       <legend className="mb-1.5 text-14 font-medium text-bone">{legend}</legend>
-      <div className="flex flex-wrap gap-2">
+      <div className={options.length === 2 ? "choices choices-pair" : "choices"}>
         {options.map((o) => (
           <label key={o.value} className="choice">
             <input
@@ -186,6 +186,7 @@ export function ChoiceGroup<T extends string>({
               onChange={() => onChange(o.value)}
               className="sr-only"
             />
+            <span aria-hidden className="choice-dot" />
             {o.label}
           </label>
         ))}

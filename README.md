@@ -17,16 +17,21 @@ npm run dev          # http://localhost:3000
 
 No database is needed. Reference data comes from `@stacked/seed-data` unless `DATABASE_URL` is set; your policies stay in your browser.
 
-### With Postgres
+### With Postgres (Supabase)
+
+The live app reads from Supabase, where everything sits in its own `stacked` schema so it never touches other tables in the same database.
 
 ```sh
-cp apps/web/.env.example apps/web/.env        # set DATABASE_URL
-npm run db:migrate -w @stacked/web            # creates the tables
-npm run db:seed -w @stacked/web               # Table A, B1/B2, C
+cp apps/web/.env.example apps/web/.env        # set DATABASE_URL (pooler, 6543) and DIRECT_URL (5432)
+npx prisma migrate deploy --schema apps/web/prisma/schema.prisma   # creates the tables; never resets
+npm run db:seed -w @stacked/web               # Table A, B1/B2, C + the sample user and policies
 ```
+
+If the database can't be reached, the app falls back to the same rows built in.
 
 ## Use it
 
+0. **Just looking?** Press *Try with sample policies* on the first screen. It loads four sample policies and opens their claim plan.
 1. **Add your policies** (Vault → *Add a policy*). Start with your employer cover; it's usually the one to claim from.
    - *Employer group policy*: answer the five questions on your HR e-card (insurer, sum insured, room limit, co-pay, maternity, pre-existing diseases from day 1).
    - *Pick a product*: search the list (for example "Care Supreme" or "Arogya Sanjeevani"), enter your sum insured, members and start date, then check the terms filled from product data.
@@ -58,7 +63,7 @@ To test a deployment with the e2e suite: `BASE_URL=https://stacked-rose.vercel.a
 ## Check it
 
 ```sh
-npm test                 # engine (93), seed data (17), web helpers (8)
+npm test                 # engine (93), seed data (18), web helpers (9)
 npm run coverage         # engine at 100% statements/branches/functions/lines
 npm run typecheck
 npm run lint

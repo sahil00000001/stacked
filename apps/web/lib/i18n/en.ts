@@ -11,6 +11,48 @@ export const en = {
     disclaimer:
       "Not insurance advice. Figures are insurer-level from IRDAI disclosures (FY24–26). Your policy wording overrides this app.",
   },
+  intro: {
+    kicker: "Stacked — the wallet-stack of covers",
+    headline: "Three covers. One clear claim.",
+    sub: "Stacked reads every health policy you're on and tells you which to claim first, what each one pays, and how sure you can be it gets paid — before the hospital desk asks.",
+    stageAlt:
+      "Example: a ₹6,20,000 cardiac stay. Employer cover pays ₹4,53,652 first, ReAssure 2.0 pays ₹1,04,609, you pay ₹61,739 for consumables, and a critical-illness plan adds a ₹10,00,000 lump sum.",
+    bill: "Hospital bill",
+    first: "Claim first",
+    then: "Then",
+    youPay: "You pay",
+    consumables: "Consumables",
+    lumpSumPrefix: "Plus a",
+    lumpSumSuffix: "critical-illness lump sum, paid on top.",
+    points: [
+      {
+        title: "Claim order in seconds",
+        body: "Employer, your own, your parents' floater: the order that pays most and keeps your cover.",
+      },
+      {
+        title: "Every rupee explained",
+        body: "Room caps, co-pays and consumables, line by line, before the bill arrives.",
+      },
+      {
+        title: "Insurers you can trust",
+        body: "Claim records and complaints for 31 insurers, straight from IRDAI disclosures.",
+      },
+    ],
+    steps: [
+      "Add the policies you're covered by",
+      "Simulate a hospital stay",
+      "Get your claim order and claim-day checklist",
+    ],
+    tryDemo: "Try with sample policies",
+    loading: "Loading sample policies",
+    replay: "Replay the intro",
+    watch: "Watch the intro",
+  },
+  demo: {
+    banner: "You're looking at sample policies for Asha, a fictional user. Add your own policy to replace them.",
+    clear: "Clear sample policies",
+    cleared: "Sample policies cleared",
+  },
   pwa: {
     description: "Which health policy to claim from, how much you'll get, and how sure you can be it gets paid.",
     title: "Use Stacked as an app",
@@ -20,7 +62,8 @@ export const en = {
     running: "You're using the installed app.",
     ios: "On iPhone or iPad: open this page in Safari, tap Share, then Add to Home Screen.",
     unsupported: "To install, open this page in Chrome or Edge (Android, Windows, Mac) or Safari (iPhone, iPad).",
-    insecure: "Installing needs a secure (https) address. Open the app from its https link, or from localhost on this computer.",
+    insecure:
+      "Installing needs a secure (https) address. Open the app from its https link, or from localhost on this computer.",
     offline: "You're offline. Your policies, saved plans and insurer records still work.",
     updated: "A new version is ready. Reopen the app to use it.",
   },

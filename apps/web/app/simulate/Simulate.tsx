@@ -38,7 +38,8 @@ export function Simulate() {
   const saved = useStore((s) => s.draft);
   const setDraft = useStore((s) => s.setDraft);
   const setCurrent = useStore((s) => s.setCurrent);
-  const { data: insurers, isLoading } = useInsurers();
+  const { data: insurers } = useInsurers();
+  const loading = !insurers;
   const { data: scenarios = [] } = useScenarios();
   const [d, setD] = useState<SimulateDraft | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -319,9 +320,9 @@ export function Simulate() {
         <PlinthButton
           type="submit"
           size="lg"
-          className="self-start"
-          disabled={isLoading}
-          busy={isLoading}
+          className="w-full sm:w-auto sm:self-start"
+          disabled={loading}
+          busy={loading}
           busyLabel={s.submit}
         >
           {s.submit}

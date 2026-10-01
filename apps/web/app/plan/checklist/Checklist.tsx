@@ -70,7 +70,7 @@ export function Checklist() {
         <p className="text-16 text-bone">{current.plan.headline}</p>
       </PageHeader>
       <Stepper steps={steps} />
-      <div className="no-print mt-8 flex flex-wrap gap-3">
+      <div className="actions no-print mt-8">
         <PlinthButton variant="secondary" onClick={() => window.print()}>
           {t.checklist.print}
         </PlinthButton>

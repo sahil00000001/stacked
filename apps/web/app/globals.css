@@ -207,28 +207,90 @@
     padding-right: var(--space-8);
   }
 
-  /* Choice chips used as radio groups */
+  /* Radio options: a stacked list on phones, one row from 640px */
+  .choices {
+    display: grid;
+    gap: var(--space-2);
+  }
+  /* two short options (Yes/No) sit side by side even on phones */
+  .choices-pair {
+    grid-template-columns: 1fr 1fr;
+  }
+  @media (min-width: 40rem) {
+    .choices {
+      display: flex;
+      flex-wrap: wrap;
+    }
+  }
   .choice {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    min-height: var(--tap-min);
+    gap: var(--space-3);
+    min-height: 3rem;
     padding: 0 var(--space-4);
     border: var(--border-width) solid var(--edge);
-    border-radius: var(--radius-chip);
+    border-radius: var(--radius-button);
     background: var(--graphite);
     color: var(--bone);
     cursor: pointer;
+    font-size: var(--text-16);
     font-weight: var(--weight-medium);
-    font-size: var(--text-14);
+    transition:
+      border-color var(--duration-quick) var(--ease-out),
+      background-color var(--duration-quick) var(--ease-out);
+  }
+  .choice:hover {
+    border-color: var(--ash);
+  }
+  .choice-dot {
+    position: relative;
+    width: 1.125rem;
+    height: 1.125rem;
+    flex-shrink: 0;
+    border: 2px solid var(--ash);
+    border-radius: 50%;
+  }
+  .choice-dot::after {
+    content: "";
+    position: absolute;
+    inset: 3px;
+    border-radius: 50%;
+    background: var(--mint);
+    transform: scale(0);
+    transition: transform var(--duration-quick) var(--ease-out);
   }
   .choice:has(input:checked) {
-    background: var(--bone);
-    color: var(--ink);
     border-color: var(--bone);
+    background: var(--slate);
+  }
+  .choice:has(input:checked) .choice-dot {
+    border-color: var(--mint);
+  }
+  .choice:has(input:checked) .choice-dot::after {
+    transform: scale(1);
   }
   .choice:has(input:focus-visible) {
     outline: var(--focus-width) solid var(--focus);
     outline-offset: var(--focus-offset);
+  }
+
+  /* Action rows: full-width buttons stacked on phones, inline from 640px */
+  .actions {
+    display: grid;
+    gap: var(--space-3);
+  }
+  .actions > * {
+    width: 100%;
+  }
+  @media (min-width: 40rem) {
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .actions > * {
+      width: auto;
+    }
   }
 
   .eyebrow {

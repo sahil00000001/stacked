@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { formatINR } from "@stacked/claim-engine";
@@ -37,6 +38,9 @@ export function You() {
 
       <Section title={t.pwa.title} id="app">
         <InstallCard />
+        <Link href="/welcome" className="mt-4 inline-flex min-h-11 items-center text-14 font-medium">
+          {t.intro.watch}
+        </Link>
       </Section>
 
       <Section title={t.you.plans} id="plans">
@@ -54,7 +58,7 @@ export function You() {
                     {t.plan.engine(p.engine_version)}.
                   </p>
                 </div>
-                <div className="flex flex-wrap gap-3">
+                <div className="actions">
                   <PlinthButton
                     variant="secondary"
                     onClick={() => {
@@ -90,7 +94,7 @@ export function You() {
           }}
         >
           <MoneyField label={t.you.usualRoomRate} hint={t.you.usualRoomRateHint} value={roomRate} onValue={setRate} />
-          <PlinthButton type="submit" variant="secondary" className="self-start">
+          <PlinthButton type="submit" variant="secondary" className="w-full sm:w-auto sm:self-start">
             {t.you.saveSettings}
           </PlinthButton>
         </form>
@@ -108,7 +112,7 @@ export function You() {
       </Section>
 
       <Sheet open={confirm} onClose={() => setConfirm(false)} title={t.you.clearConfirm}>
-        <div className="flex flex-wrap gap-3">
+        <div className="actions">
           <PlinthButton
             onClick={() => {
               clearAll();

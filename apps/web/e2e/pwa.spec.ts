@@ -2,6 +2,8 @@ import { expect, test } from "@playwright/test";
 import { GROUP, OWN, seed } from "./fixtures";
 
 test.describe("Installable app (PWA)", () => {
+  test.use({ serviceWorkers: "allow" });
+
   test("serves a valid manifest and icons", async ({ request }) => {
     const res = await request.get("/manifest.webmanifest");
     expect(res.ok()).toBe(true);

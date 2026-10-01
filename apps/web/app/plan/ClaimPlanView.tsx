@@ -229,7 +229,7 @@ function PlanBody({ current, insurers }: { current: CurrentPlan; insurers: Insur
         </Section>
       )}
 
-      <div className="no-print mt-10 flex flex-wrap gap-3">
+      <div className="actions no-print mt-10">
         <PlinthButton
           size="lg"
           onClick={() => {

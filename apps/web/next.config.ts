@@ -1,3 +1,4 @@
+import { PrismaPlugin } from "@prisma/nextjs-monorepo-workaround-plugin";
 import type { NextConfig } from "next";
 
 const config: NextConfig = {
@@ -17,7 +18,9 @@ const config: NextConfig = {
       },
     ];
   },
-  webpack(cfg) {
+  webpack(cfg, { isServer }) {
+    // copy Prisma's query engine into the serverless bundle (npm workspaces hoist it to the repo root)
+    if (isServer) cfg.plugins = [...(cfg.plugins ?? []), new PrismaPlugin()];
     // the engine uses ESM-style ".js" specifiers for its .ts files
     cfg.resolve.extensionAlias = { ".js": [".ts", ".tsx", ".js"] };
     return cfg;

@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import type { Policy } from "@stacked/claim-engine";
-import { EmptyState } from "@/components/EmptyState";
+import { Intro } from "@/components/Intro";
 import { PlinthButton, PlinthLink } from "@/components/PlinthButton";
 import { PolicyCard } from "@/components/PolicyCard";
 import { PageHeader } from "@/components/primitives";
 import { Sheet } from "@/components/Sheet";
 import { useToast } from "@/components/Toast";
+import { useLoadDemo } from "@/lib/demo";
 import { computeGaps } from "@/lib/gaps";
 import { useHydrated } from "@/lib/hydrated";
 import { t } from "@/lib/i18n/en";
@@ -32,13 +33,19 @@ export default function VaultPage() {
   const policies = useStore((s) => s.policies);
   const usualRoomRate = useStore((s) => s.settings.usualRoomRate);
   const removePolicy = useStore((s) => s.removePolicy);
+  const demo = useStore((s) => s.demo);
+  const clearDemo = useStore((s) => s.clearDemo);
+  const sample = useLoadDemo();
   const { data: insurers = [] } = useInsurers();
   const { data: products = [] } = useProducts();
   const [open, setOpen] = useState<string | null>(null);
   const [removing, setRemoving] = useState<Policy | null>(null);
   const toast = useToast();
 
-  if (!hydrated) return <PageHeader title={t.vault.title} intro={t.vault.intro} />;
+  // wait for the on-device vault before choosing intro or vault, so neither flashes
+  if (!hydrated) return <div className="min-h-[60vh]" aria-busy="true" />;
+  if (policies.length === 0)
+    return <Intro onTryDemo={() => sample.load("/plan")} demoBusy={sample.busy} demoReady={sample.ready} />;
 
   const today = todayISO();
   const sorted = [...policies].sort((a, b) => rank(a) - rank(b));
@@ -47,6 +54,26 @@ export default function VaultPage() {
   return (
     <>
       <PageHeader title={t.vault.title} intro={t.vault.intro} />
+
+      {demo && (
+        <div className="grain mb-6 flex flex-col gap-3 rounded-card border border-edge p-4" data-testid="demo-banner">
+          <p className="text-16 text-bone">{t.demo.banner}</p>
+          <div className="actions">
+            <PlinthLink href="/plan" variant="secondary">
+              {t.plan.title}
+            </PlinthLink>
+            <PlinthButton
+              variant="secondary"
+              onClick={() => {
+                clearDemo();
+                toast(t.demo.cleared);
+              }}
+            >
+              {t.demo.clear}
+            </PlinthButton>
+          </div>
+        </div>
+      )}
 
       {gaps.length > 0 && (
         <details
@@ -66,52 +93,44 @@ export default function VaultPage() {
         </details>
       )}
 
-      {sorted.length === 0 ? (
-        <EmptyState
-          title={t.vault.empty.title}
-          body={t.vault.empty.body}
-          action={<PlinthLink href="/add?way=employer">{t.vault.add}</PlinthLink>}
-        />
-      ) : (
-        <>
-          <ul className="flex flex-col gap-3" aria-label={t.vault.title}>
-            {sorted.map((p, i) => {
-              const insurer = insurers.find((x) => x.insurer_id === p.insurer_id);
-              const product = products.find((x) => x.product_id === p.product_id);
-              return (
-                <li key={p.policy_id}>
-                  <PolicyCard
-                    policy={p}
-                    insurer={insurer}
-                    productName={product ? [product.product_name, product.variant].filter(Boolean).join(" ") : null}
-                    today={today}
-                    stackIndex={i}
-                    expanded={open === p.policy_id}
-                    onToggle={() => setOpen(open === p.policy_id ? null : p.policy_id)}
-                    actions={
-                      <>
-                        <PlinthLink href={`/add?edit=${p.policy_id}`} variant="secondary">
-                          {p.data_status === "user_verified" ? t.common.edit : t.vault.markVerified}
-                        </PlinthLink>
-                        <PlinthButton variant="secondary" onClick={() => setRemoving(p)}>
-                          {t.common.remove}
-                        </PlinthButton>
-                      </>
-                    }
-                  />
-                </li>
-              );
-            })}
-          </ul>
-          <div className="mt-8">
-            <PlinthLink href="/add">{t.vault.add}</PlinthLink>
-          </div>
-        </>
-      )}
+      <>
+        <ul className="flex flex-col gap-3" aria-label={t.vault.title}>
+          {sorted.map((p, i) => {
+            const insurer = insurers.find((x) => x.insurer_id === p.insurer_id);
+            const product = products.find((x) => x.product_id === p.product_id);
+            return (
+              <li key={p.policy_id}>
+                <PolicyCard
+                  policy={p}
+                  insurer={insurer}
+                  productName={product ? [product.product_name, product.variant].filter(Boolean).join(" ") : null}
+                  today={today}
+                  stackIndex={i}
+                  expanded={open === p.policy_id}
+                  onToggle={() => setOpen(open === p.policy_id ? null : p.policy_id)}
+                  actions={
+                    <>
+                      <PlinthLink href={`/add?edit=${p.policy_id}`} variant="secondary">
+                        {p.data_status === "user_verified" ? t.common.edit : t.vault.markVerified}
+                      </PlinthLink>
+                      <PlinthButton variant="secondary" onClick={() => setRemoving(p)}>
+                        {t.common.remove}
+                      </PlinthButton>
+                    </>
+                  }
+                />
+              </li>
+            );
+          })}
+        </ul>
+        <div className="actions mt-8">
+          <PlinthLink href="/add">{t.vault.add}</PlinthLink>
+        </div>
+      </>
 
       <Sheet open={removing !== null} onClose={() => setRemoving(null)} title={t.vault.removeConfirm}>
         <p className="text-16 text-ash font-medium">{removing?.label ?? ""}</p>
-        <div className="flex flex-wrap gap-3">
+        <div className="actions">
           <PlinthButton
             onClick={() => {
               if (removing) removePolicy(removing.policy_id);

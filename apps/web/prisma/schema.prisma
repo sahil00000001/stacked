@@ -1,4 +1,6 @@
 // Stacked — data model (BUILD_PROMPT.md §7).
+// Lives in its own Postgres schema ("stacked", set by ?schema= in the URLs) so it
+// never touches other tables in a shared database.
 // Reference tables use the research doc's column names so seed rows load unchanged.
 // Nested Policy and plan structures are stored as JSON validated by the Zod schemas
 // in @stacked/claim-engine; key columns are lifted out for querying.
@@ -9,7 +11,8 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url       = env("DATABASE_URL") // pooled (transaction mode) for the app
+  directUrl = env("DIRECT_URL") // session mode, for migrations
 }
 
 enum InsurerType {

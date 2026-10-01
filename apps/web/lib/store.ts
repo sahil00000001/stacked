@@ -29,6 +29,10 @@ interface State {
   draft: SimulateDraft | null;
   current: CurrentPlan | null;
   settings: { usualRoomRate: number };
+  /** true while the vault holds the sample policies */
+  demo: boolean;
+  loadDemo: (policies: Policy[], current: CurrentPlan) => void;
+  clearDemo: () => void;
   addPolicy: (p: Policy) => void;
   updatePolicy: (p: Policy) => void;
   removePolicy: (id: string) => void;
@@ -55,7 +59,12 @@ export const useStore = create<State>()(
       draft: null,
       current: null,
       settings: { usualRoomRate: 8000 },
-      addPolicy: (p) => set((s) => ({ policies: [...s.policies, p] })),
+      demo: false,
+      loadDemo: (policies, current) => set({ policies, current, draft: null, demo: true }),
+      clearDemo: () => set({ policies: [], current: null, draft: null, demo: false }),
+      // adding your own policy ends sample mode and replaces the sample policies
+      addPolicy: (p) =>
+        set((s) => (s.demo ? { policies: [p], current: null, demo: false } : { policies: [...s.policies, p] })),
       updatePolicy: (p) => set((s) => ({ policies: s.policies.map((x) => (x.policy_id === p.policy_id ? p : x)) })),
       removePolicy: (id) => set((s) => ({ policies: s.policies.filter((x) => x.policy_id !== id) })),
       setDraft: (d) => set({ draft: d }),
@@ -79,7 +88,7 @@ export const useStore = create<State>()(
       },
       deletePlan: (id) => set((s) => ({ plans: s.plans.filter((p) => p.id !== id) })),
       setSettings: (x) => set((s) => ({ settings: { ...s.settings, ...x } })),
-      clearAll: () => set({ policies: [], plans: [], draft: null, current: null }),
+      clearAll: () => set({ policies: [], plans: [], draft: null, current: null, demo: false }),
     }),
     {
       name: "stacked-v1",

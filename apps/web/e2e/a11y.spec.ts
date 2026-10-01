@@ -17,10 +17,13 @@ const ROUTES = [
   "/insurers/galaxy-health",
   "/you",
   "/design",
+  "/welcome",
 ];
 
 test("no axe violations on any screen", async ({ page }) => {
   test.setTimeout(240_000);
+  // check final states, not mid-animation frames
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await seed(page, [GROUP, OWN, PARENTS]);
   // make a plan so /plan and /plan/checklist have content
   await page.goto("/simulate");
@@ -47,7 +50,15 @@ test("no axe violations on any screen", async ({ page }) => {
 
 test("no horizontal scroll at this width", async ({ page }) => {
   await seed(page, [GROUP, OWN, PARENTS]);
-  for (const route of ["/", "/simulate", "/insurers", "/insurers/hdfc-ergo", "/design", "/add?way=manual"]) {
+  for (const route of [
+    "/",
+    "/welcome",
+    "/simulate",
+    "/insurers",
+    "/insurers/hdfc-ergo",
+    "/design",
+    "/add?way=manual",
+  ]) {
     await page.goto(route);
     await page.locator("h1").first().waitFor();
     const overflow = await page.evaluate(

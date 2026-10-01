@@ -40,6 +40,7 @@
     "@axe-core/playwright": "^4.13.0",
     "@eslint/eslintrc": "^3.3.7",
     "@playwright/test": "^1.63.0",
+    "@prisma/nextjs-monorepo-workaround-plugin": "^6.19.3",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^22.20.4",
     "@types/react": "^19.3.0",

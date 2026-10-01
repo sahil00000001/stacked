@@ -136,3 +136,15 @@ describe("simulate → plan view", () => {
     expect(icrReading(null)).toBeNull();
   });
 });
+
+describe("intro", () => {
+  it("shows the engine's real numbers for the sample vault", async () => {
+    const { DEMO_POLICIES, demoScenario } = await import("@stacked/seed-data");
+    const { INTRO_EXAMPLE } = await import("@/lib/introExample");
+    const plan = allocateClaim(DEMO_POLICIES, demoScenario(today), INSURERS);
+    expect(plan.total_bill).toBe(INTRO_EXAMPLE.bill);
+    expect(plan.allocation.map((a) => [a.policy_id, a.payout])).toEqual(INTRO_EXAMPLE.split.map((s) => [s.policy_id, s.amount]));
+    expect(plan.out_of_pocket).toBe(INTRO_EXAMPLE.youPay);
+    expect(plan.fixed_benefit_payout).toBe(INTRO_EXAMPLE.lumpSum);
+  });
+});
